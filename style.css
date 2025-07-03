@@ -19,6 +19,11 @@ html, body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    /* 추가: iOS Safari에서 풀다운 새로고침 방지 */
+    -webkit-overflow-scrolling: auto;
+    overscroll-behavior: none;
+    /* 추가: 모든 스크롤 동작 차단 */
+    scroll-behavior: none;
 }
 
 body {
