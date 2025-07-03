@@ -58,11 +58,17 @@ class Game2048 {
         const gameContainer = document.querySelector('.game-container');
         
         gameContainer.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // 기본 터치 동작 방지
             startX = e.touches[0].clientX;
             startY = e.touches[0].clientY;
-        }, { passive: true });
+        }, { passive: false });
+        
+        gameContainer.addEventListener('touchmove', (e) => {
+            e.preventDefault(); // 스크롤 방지
+        }, { passive: false });
         
         gameContainer.addEventListener('touchend', (e) => {
+            e.preventDefault(); // 기본 터치 동작 방지
             if (this.gameOver) return;
             
             endX = e.changedTouches[0].clientX;
@@ -89,7 +95,7 @@ class Game2048 {
                     }
                 }
             }
-        }, { passive: true });
+        }, { passive: false });
     }
     
     newGame() {
