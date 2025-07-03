@@ -4,6 +4,13 @@
     box-sizing: border-box;
 }
 
+html, body {
+    overscroll-behavior-y: contain;
+    touch-action: none;
+    overflow: hidden;
+    height: 100%;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

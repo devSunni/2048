@@ -51,6 +51,9 @@ class Game2048 {
         
         // 터치 이벤트 (모바일 스와이프)
         this.setupTouchEvents();
+        
+        // 전체 페이지 터치 이벤트 방지 (풀다운 새로고침 방지)
+        this.setupGlobalTouchPrevention();
     }
     
     setupTouchEvents() {
@@ -94,6 +97,32 @@ class Game2048 {
                         this.move('up');
                     }
                 }
+            }
+        }, { passive: false });
+    }
+    
+    setupGlobalTouchPrevention() {
+        // 전체 페이지에서 풀다운 새로고침 방지
+        document.addEventListener('touchmove', (e) => {
+            // 게임 영역이 아닌 곳에서의 터치 이동 방지
+            if (!e.target.closest('.game-container')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // 터치 시작 시에도 기본 동작 방지
+        document.addEventListener('touchstart', (e) => {
+            // 게임 영역이 아닌 곳에서의 터치 시작 방지
+            if (!e.target.closest('.game-container') && !e.target.closest('button')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // 터치 종료 시에도 기본 동작 방지
+        document.addEventListener('touchend', (e) => {
+            // 게임 영역이 아닌 곳에서의 터치 종료 방지
+            if (!e.target.closest('.game-container') && !e.target.closest('button')) {
+                e.preventDefault();
             }
         }, { passive: false });
     }
