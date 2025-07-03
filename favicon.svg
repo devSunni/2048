@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" rx="15" fill="#bbada0"/>
+  
+  <!-- 2048 텍스트 -->
+  <text x="50" y="35" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#776e65">2</text>
+  <text x="50" y="55" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#776e65">0</text>
+  <text x="50" y="75" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#776e65">4</text>
+  <text x="50" y="95" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#776e65">8</text>
+  
+  <!-- 게임 타일들 -->
+  <rect x="15" y="15" width="20" height="20" rx="3" fill="#eee4da"/>
+  <rect x="40" y="15" width="20" height="20" rx="3" fill="#ede0c8"/>
+  <rect x="65" y="15" width="20" height="20" rx="3" fill="#f2b179"/>
+  
+  <rect x="15" y="40" width="20" height="20" rx="3" fill="#f59563"/>
+  <rect x="40" y="40" width="20" height="20" rx="3" fill="#f67c5f"/>
+  <rect x="65" y="40" width="20" height="20" rx="3" fill="#f65e3b"/>
+  
+  <rect x="15" y="65" width="20" height="20" rx="3" fill="#edcf72"/>
+  <rect x="40" y="65" width="20" height="20" rx="3" fill="#edcc61"/>
+  <rect x="65" y="65" width="20" height="20" rx="3" fill="#edc850"/>
+</svg> 
