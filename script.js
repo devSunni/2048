@@ -102,7 +102,7 @@ class Game2048 {
     }
     
     setupGlobalTouchPrevention() {
-        // 웹앱 전체에서 새로고침 완전 차단
+        // Android 갤럭시 S24 전용 새로고침 완전 차단
         const preventAllTouch = (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -110,7 +110,32 @@ class Game2048 {
             return false;
         };
         
-        // 1. 모든 터치 이벤트를 먼저 차단 (게임 영역만 예외)
+        // 1. Android Chrome/Samsung Internet 전용 풀다운 감지
+        let startY = 0;
+        let startTime = 0;
+        
+        document.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+            startTime = Date.now();
+        }, { passive: false, capture: true });
+        
+        document.addEventListener('touchmove', (e) => {
+            const currentY = e.touches[0].clientY;
+            const deltaY = currentY - startY;
+            const deltaTime = Date.now() - startTime;
+            
+            // Android에서 풀다운 새로고침 감지 (상단에서 아래로 스와이프)
+            if (deltaY > 30 && startY < 100) {
+                preventAllTouch(e);
+            }
+            
+            // 빠른 스와이프 감지 (Android Chrome 특성)
+            if (deltaY > 50 && deltaTime < 300) {
+                preventAllTouch(e);
+            }
+        }, { passive: false, capture: true });
+        
+        // 2. 모든 터치 이벤트를 완전히 차단 (게임 영역만 예외)
         const handleTouch = (e) => {
             // 게임 컨테이너 내부가 아닌 경우 모두 차단
             if (!e.target.closest('.container')) {
@@ -118,7 +143,7 @@ class Game2048 {
             }
         };
         
-        // 2. 모든 가능한 요소에 터치 이벤트 리스너 추가
+        // 3. Android 전용 다중 레벨 이벤트 차단
         [document, document.documentElement, document.body, window].forEach(element => {
             ['touchstart', 'touchmove', 'touchend', 'touchcancel'].forEach(eventType => {
                 element.addEventListener(eventType, handleTouch, { 
@@ -128,7 +153,7 @@ class Game2048 {
             });
         });
         
-        // 3. 스크롤 이벤트 완전 차단
+        // 4. Android Chrome 전용 스크롤 차단
         const preventScroll = (e) => {
             e.preventDefault();
             window.scrollTo(0, 0);
@@ -138,44 +163,59 @@ class Game2048 {
         window.addEventListener('scroll', preventScroll, { passive: false });
         document.addEventListener('scroll', preventScroll, { passive: false });
         
-        // 4. 페이지 리로드 방지 (모든 경우)
+        // 5. Android 전용 페이지 리로드 방지
         window.addEventListener('beforeunload', (e) => {
             e.preventDefault();
             e.returnValue = '';
             return '';
         });
         
-        // 5. 추가: iOS Safari에서의 풀다운 새로고침 방지
-        let startY = 0;
-        document.addEventListener('touchstart', (e) => {
-            startY = e.touches[0].clientY;
-        }, { passive: true });
-        
-        document.addEventListener('touchmove', (e) => {
-            const currentY = e.touches[0].clientY;
-            const deltaY = currentY - startY;
-            
-            // 위에서 아래로 스와이프하는 경우 (풀다운 새로고침)
-            if (deltaY > 0 && startY < 50) {
-                e.preventDefault();
-                e.stopPropagation();
-                return false;
-            }
-        }, { passive: false });
-        
-        // 6. 추가: 키보드 새로고침 방지
+        // 6. Android Chrome 전용 키보드 새로고침 방지
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
+            if (e.key === 'F5' || (e.ctrlKey && e.key === 'r') || e.key === 'F12') {
                 e.preventDefault();
                 return false;
             }
         });
         
-        // 7. 추가: 컨텍스트 메뉴 방지 (우클릭 새로고침 방지)
+        // 7. Android 전용 컨텍스트 메뉴 방지
         document.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             return false;
         });
+        
+        // 8. Android Chrome 전용 추가 방지
+        document.addEventListener('gesturestart', (e) => {
+            e.preventDefault();
+            return false;
+        }, { passive: false });
+        
+        document.addEventListener('gesturechange', (e) => {
+            e.preventDefault();
+            return false;
+        }, { passive: false });
+        
+        document.addEventListener('gestureend', (e) => {
+            e.preventDefault();
+            return false;
+        }, { passive: false });
+        
+        // 9. Android 전용 터치 이벤트 강제 차단
+        document.addEventListener('touchstart', (e) => {
+            if (!e.target.closest('.container')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        }, { passive: false, capture: true });
+        
+        document.addEventListener('touchmove', (e) => {
+            if (!e.target.closest('.container')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        }, { passive: false, capture: true });
     }
     
     newGame() {
