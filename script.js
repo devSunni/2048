@@ -104,25 +104,43 @@ class Game2048 {
     setupGlobalTouchPrevention() {
         // 전체 페이지에서 풀다운 새로고침 방지
         document.addEventListener('touchmove', (e) => {
-            // 게임 영역이 아닌 곳에서의 터치 이동 방지
-            if (!e.target.closest('.game-container')) {
+            // 게임 컨테이너나 버튼이 아닌 모든 영역에서 터치 이동 방지
+            if (!e.target.closest('.container')) {
                 e.preventDefault();
+                e.stopPropagation();
             }
         }, { passive: false });
         
         // 터치 시작 시에도 기본 동작 방지
         document.addEventListener('touchstart', (e) => {
-            // 게임 영역이 아닌 곳에서의 터치 시작 방지
-            if (!e.target.closest('.game-container') && !e.target.closest('button')) {
+            // 게임 컨테이너나 버튼이 아닌 모든 영역에서 터치 시작 방지
+            if (!e.target.closest('.container')) {
                 e.preventDefault();
+                e.stopPropagation();
             }
         }, { passive: false });
         
         // 터치 종료 시에도 기본 동작 방지
         document.addEventListener('touchend', (e) => {
-            // 게임 영역이 아닌 곳에서의 터치 종료 방지
-            if (!e.target.closest('.game-container') && !e.target.closest('button')) {
+            // 게임 컨테이너나 버튼이 아닌 모든 영역에서 터치 종료 방지
+            if (!e.target.closest('.container')) {
                 e.preventDefault();
+                e.stopPropagation();
+            }
+        }, { passive: false });
+        
+        // 추가: body 전체에 터치 이벤트 방지
+        document.body.addEventListener('touchmove', (e) => {
+            if (!e.target.closest('.container')) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, { passive: false });
+        
+        document.body.addEventListener('touchstart', (e) => {
+            if (!e.target.closest('.container')) {
+                e.preventDefault();
+                e.stopPropagation();
             }
         }, { passive: false });
     }

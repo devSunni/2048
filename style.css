@@ -6,9 +6,12 @@
 
 html, body {
     overscroll-behavior-y: contain;
+    overscroll-behavior-x: contain;
     touch-action: none;
     overflow: hidden;
     height: 100%;
+    position: fixed;
+    width: 100%;
 }
 
 body {
