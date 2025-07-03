@@ -7,6 +7,10 @@ class Game2048 {
         this.won = false;
         this.records = this.loadRecords();
         
+        // 게임 상태 자동 저장/복원 시스템
+        this.autoSaveInterval = null;
+        this.loadGameState();
+        
         this.init();
     }
     
@@ -17,6 +21,21 @@ class Game2048 {
         this.updateDisplay();
         this.updateRecordsDisplay();
         this.setupEventListeners();
+        
+        // 자동 저장 시작
+        this.startAutoSave();
+        
+        // 페이지 언로드 시 저장
+        window.addEventListener('beforeunload', () => {
+            this.saveGameState();
+        });
+        
+        // 페이지 숨김 시 저장 (모바일에서 앱 전환 시)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                this.saveGameState();
+            }
+        });
     }
     
     setupEventListeners() {
@@ -228,6 +247,9 @@ class Game2048 {
         this.addRandomTile();
         this.updateDisplay();
         this.updateGameStatus('');
+        
+        // 새 게임 시작 시 저장
+        this.saveGameState();
     }
     
     addRandomTile() {
@@ -269,6 +291,8 @@ class Game2048 {
             this.addRandomTile();
             this.updateDisplay();
             this.checkGameState();
+            // 이동 후 즉시 저장
+            this.saveGameState();
         }
     }
     
@@ -425,6 +449,69 @@ class Game2048 {
     
     updateGameStatus(message) {
         document.getElementById('game-status').textContent = message;
+    }
+    
+    saveGameState() {
+        const gameState = {
+            grid: this.grid,
+            score: this.score,
+            gameOver: this.gameOver,
+            won: this.won,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('2048-game-state', JSON.stringify(gameState));
+    }
+    
+    loadGameState() {
+        const savedState = localStorage.getItem('2048-game-state');
+        if (savedState) {
+            try {
+                const gameState = JSON.parse(savedState);
+                const timeDiff = Date.now() - gameState.timestamp;
+                
+                // 24시간 이내의 저장된 게임만 복원
+                if (timeDiff < 24 * 60 * 60 * 1000) {
+                    this.grid = gameState.grid;
+                    this.score = gameState.score;
+                    this.gameOver = gameState.gameOver;
+                    this.won = gameState.won;
+                    
+                    // 복원된 게임 상태 표시
+                    this.updateDisplay();
+                    this.updateRecordsDisplay();
+                    
+                    if (this.gameOver) {
+                        this.updateGameStatus('게임 오버! 다시 시도해보세요.');
+                    } else if (this.won) {
+                        this.updateGameStatus('🎉 2048 달성! 계속 플레이하세요!');
+                    } else {
+                        this.updateGameStatus('게임이 복원되었습니다!');
+                        setTimeout(() => {
+                            this.updateGameStatus('');
+                        }, 2000);
+                    }
+                    
+                    return true; // 복원 성공
+                }
+            } catch (error) {
+                console.warn('게임 상태 복원 실패:', error);
+            }
+        }
+        return false; // 복원 실패
+    }
+    
+    startAutoSave() {
+        // 5초마다 자동 저장
+        this.autoSaveInterval = setInterval(() => {
+            this.saveGameState();
+        }, 5000);
+    }
+    
+    stopAutoSave() {
+        if (this.autoSaveInterval) {
+            clearInterval(this.autoSaveInterval);
+            this.autoSaveInterval = null;
+        }
     }
     
     loadRecords() {
